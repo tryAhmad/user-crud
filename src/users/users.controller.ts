@@ -14,6 +14,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Role } from 'src/common/enums/roles.enum';
+import { Roles } from 'src/common/decorators/roles.decorators';
 
 @ApiTags('users')
 @Controller('users')
@@ -42,6 +45,8 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin) // Only Admin can access this route
   @ApiOperation({ summary: 'Retrieves all users' })
   @ApiResponse({
     status: 200,
@@ -57,7 +62,7 @@ export class UsersController {
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Retrieves all users with passwords' })
+  @ApiOperation({ summary: 'Retrieves all users with passwords (AuthGuard)' })
   @ApiResponse({
     status: 200,
     description: 'Users with passwords have been retrieved successfully',
