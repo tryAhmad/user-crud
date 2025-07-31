@@ -10,6 +10,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
+  //only shown in swagger documentation
   @ApiOperation({ summary: 'Registers a new user' })
   @ApiResponse({
     status: 201,
