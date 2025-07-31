@@ -6,11 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -49,6 +52,23 @@ export class UsersController {
     return {
       message: 'Users retrieved successfully',
       users,
+    };
+  }
+
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Retrieves all users with passwords' })
+  @ApiResponse({
+    status: 200,
+    description: 'Users with passwords have been retrieved successfully',
+  })
+  async getProfile(@Req() req) {
+    const userId = req.user.userId;
+    console.log('Decoded user from token:', req.user);
+    const user = await this.usersService.getUserProfile(userId);
+    return {
+      message: 'User profile retrieved successfully',
+      user,
     };
   }
 
